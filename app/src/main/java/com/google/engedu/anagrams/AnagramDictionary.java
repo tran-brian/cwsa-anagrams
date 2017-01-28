@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import android.util.Log;
 
 public class AnagramDictionary {
 
@@ -73,17 +72,10 @@ public class AnagramDictionary {
 
     public boolean isGoodWord(String word, String base) {
         return wordSet.contains(word) && !word.contains(base);
-//        return true;
     }
 
     public List<String> getAnagrams(String targetWord) {
         ArrayList<String> result = new ArrayList<String>();
-
-//        String sorted = sortLetters(targetWord);
-//
-//        if(lettersToWord.containsKey(sorted)) {
-//            result.addAll(lettersToWord.get(sorted));
-//        }
 
         for(int i = 0; i < wordList.size(); i++) {
             String word = wordList.get(i);

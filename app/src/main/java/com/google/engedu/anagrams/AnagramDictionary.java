@@ -36,6 +36,7 @@ public class AnagramDictionary {
     private HashSet<String> wordSet= new HashSet();
     private HashMap<String, ArrayList<String>> lettersToWord = new HashMap<>();
     private HashMap<Integer, ArrayList<String>> sizeToWords = new HashMap<>();
+    private HashSet<String> pastWordSet = new HashSet<>();
     private int wordLength = 4;
 
     public AnagramDictionary(Reader reader) throws IOException {
@@ -76,13 +77,10 @@ public class AnagramDictionary {
 
     public List<String> getAnagrams(String targetWord) {
         ArrayList<String> result = new ArrayList<String>();
+        String sorted = sortLetters(targetWord);
 
-        for(int i = 0; i < wordList.size(); i++) {
-            String word = wordList.get(i);
-
-            if(word.length() == targetWord.length() && sortLetters(word).equals(sortLetters(targetWord))) {
-                result.add(word);
-            }
+        if(lettersToWord.containsKey(sortLetters(sorted))) {
+            result.addAll(lettersToWord.get(sorted));
         }
 
         return result;
@@ -91,17 +89,13 @@ public class AnagramDictionary {
     public List<String> getAnagramsWithOneMoreLetter(String word) {
         ArrayList<String> result = new ArrayList<String>();
 
-        for(int i = 0; i < wordList.size(); i++) {
-            String s = wordList.get(i);
-            char[] chars = word.toCharArray();
+        pastWordSet.add(word);
 
-            boolean containsWord = true;
-            for(int j = 0; j < chars.length; j++) {
-                containsWord &= s.contains(Character.toString(chars[j]));
-            }
+        for(int i = 97; i <= 122; i++) {
+            String s = sortLetters(word + Character.toString((char)i));
 
-            if(s.length() == (word.length() + 1) && containsWord) {
-                result.add(s);
+            if(lettersToWord.containsKey(s)) {
+                result.addAll(lettersToWord.get(s));
             }
         }
 
@@ -114,7 +108,7 @@ public class AnagramDictionary {
         int rand = random.nextInt(words.size());
         int i = 0;
 
-        while(word.length() == 0 && (rand + i) - words.size() != rand) {
+        while(word.length() == 0 && ((rand + i) - words.size()) != rand) {
             String s;
 
             if(rand + i < words.size()) {
@@ -123,12 +117,17 @@ public class AnagramDictionary {
                 s = words.get((rand + i) - words.size());
             }
 
-            if (getAnagrams(s).size() >= MIN_NUM_ANAGRAMS) {
+            if (lettersToWord.get(sortLetters(s)).size() >= MIN_NUM_ANAGRAMS && !pastWordSet.contains(s)) {
                 word = s;
                 wordLength++;
             } else {
                 i++;
             }
+        }
+
+        if(word.length() == 0) {
+            wordLength -= 1;
+            word = pickGoodStarterWord();
         }
 
         return word;

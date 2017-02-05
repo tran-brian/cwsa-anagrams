@@ -1,3 +1,3 @@
-# cwsa-anagrams
+# CS with Android
 
-CS with Android - Session 1 - Anagrams
+Session 1 - Anagrams
